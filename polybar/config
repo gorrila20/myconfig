@@ -1,0 +1,459 @@
+[colors]
+bg          = ${xrdb:color0}
+fg          = ${xrdb:color7}
+inactive-bg = #2f343f
+inactive-fg = #676E7D
+urgent      = #E53935
+arc-blue    = ${xrdb:color2}
+
+
+[template/bar]
+enable-ipc = true
+width = 100%
+height = 27
+
+background = ${colors.bg}
+foreground = ${colors.fg}
+
+border-bottom-size = 0
+border-bottom-color = ${colors.inactive-bg}
+
+overline-size = 0
+overline-color = ${self.background}
+underline-size = 1
+underline-color = ${self.background}
+
+padding-left = 0
+padding-right = 0
+module-margin-left = 3
+module-margin-right = 3
+
+locale = nl_NL.UTF-8
+font-0 = Hack Nerd Font:size=10;0
+font-1 = "unifont:fontformat=truetype:size=8:antialias=false;0"
+wm-restack = i3
+[bar/right]
+inherit = template/bar
+modules-left = i3
+modules-center = title 
+modules-right = battery clock
+tray-position = right 
+tray-detached = false
+tray-transparent = false
+tray-padding = 5
+
+
+[bar/left]
+inherit = template/bar
+modules-left = wired-network
+modules-center = cpu i3 memory
+modules-right = clock
+
+[bar/laptop]
+inherit = template/bar
+monitor = eDP-1
+modules-left = wired-network wireless-network volume
+modules-center = cpu i3 memory
+modules-right = mail xbacklight eth bat0 bat1 clock
+
+[module/mail]
+type = custom/script
+interval = 10
+format = <label>
+format-prefix = 
+format-prefix-foreground = ${colors.inactive-fg}
+exec = ~/.scripts/printmail.sh
+
+[module/mxbattery]
+type = custom/script
+interval = 60
+format = <label>
+format-foreground = ${colors.fg}
+exec = ~/.scripts/mxbattery.sh
+
+[module/eth]
+type = custom/script
+interval = 60
+format = €<label>
+format-foreground = ${colors.inactive-fg}
+exec = ~/.scripts/ethBalance.sh
+
+[module/volume]
+type = internal/pulseaudio
+
+; Sink to be used, if it exists (find using `pacmd list-sinks`, name field)
+; If not, uses default sink
+sink = alsa_output.pci-0000_12_00.3.analog-stereo
+
+; Use PA_VOLUME_UI_MAX (~153%) if true, or PA_VOLUME_NORM (100%) if false
+; Default: true
+use-ui-max = false
+
+; Interval for volume increase/decrease (in percent points)
+; Default: 5
+interval = 5
+; Available tags:
+;   <label-volume> (default)
+;   <ramp-volume>
+;   <bar-volume>
+format-volume = <ramp-volume> <label-volume>
+
+; Available tags:
+;   <label-muted> (default)
+;   <ramp-volume>
+;   <bar-volume>
+;format-muted = <label-muted>
+
+; Available tokens:
+;   %percentage% (default)
+;   %decibels% (unreleased)
+;label-volume = %percentage%%
+
+; Available tokens:
+;   %percentage% (default)
+;   %decibels% (unreleased)
+label-muted = 🔇 muted
+label-muted-foreground = #666
+
+; Only applies if <ramp-volume> is used
+ramp-volume-0 = 🔈
+ramp-volume-1 = 🔉
+ramp-volume-2 = 🔊
+[module/xbacklight]
+type = internal/xbacklight
+format = <ramp> <bar>
+
+ramp-0 = 
+ramp-0-foreground = ${colors.inactive-bg}
+ramp-1 = 
+ramp-1-foreground = ${colors.inactive-fg}
+ramp-2 = 
+ramp-2-foreground = ${colors.fg}
+
+bar-width = 12
+bar-indicator = |
+bar-indicator-font = 6
+bar-indicator-foreground = ${colors.fg}
+bar-fill = ─
+bar-fill-font = 6
+bar-fill-foreground = ${colors.arc-blue}
+bar-empty = ─
+bar-empty-font = 6
+bar-empty-foreground = ${colors.inactive-bg}
+
+[module/i3]
+type = internal/i3
+label-active-font = 1
+; Only show workspaces defined on the same output as the bar
+;
+; Useful if you want to show monitor specific workspaces
+; on different bars
+;
+; Default: false
+pin-workspaces = true
+
+; This will split the workspace name on ':'
+; Default: false
+strip-wsnumbers = true
+
+; Sort the workspaces by index instead of the default
+; sorting that groups the workspaces by output
+; Default: false
+index-sort = true
+
+; Create click handler used to focus workspace
+; Default: true
+enable-click = false
+
+; Create scroll handlers used to cycle workspaces
+; Default: true
+enable-scroll = false
+
+; Wrap around when reaching the first/last workspace
+; Default: true
+wrapping-scroll = false
+
+; Set the scroll cycle direction 
+; Default: true
+reverse-scroll = false
+
+; Use fuzzy (partial) matching on labels when assigning 
+; icons to workspaces
+; Example: code;♚ will apply the icon to all workspaces 
+; containing 'code' in the label
+; Default: false
+fuzzy-match = true
+; ws-icon-[0-9]+ = label;icon
+; NOTE: The label needs to match the name of the i3 workspace
+ws-icon-0 = 1;♚
+ws-icon-1 = 2;♛
+ws-icon-2 = 3;♜
+ws-icon-3 = 4;♝
+ws-icon-4 = 5;♞
+ws-icon-default = ♟
+; NOTE: You cannot skip icons, e.g. to get a ws-icon-6
+; you must also define a ws-icon-5.
+; NOTE: Icon will be available as the %icon% token inside label-*
+
+; Available tags:
+;   <label-state> (default) - gets replaced with <label-(focused|unfocused|visible|urgent)>
+;   <label-mode> (default)
+format = <label-state> <label-mode>
+
+; Available tokens:
+;   %mode%
+; Default: %mode%
+label-mode = %mode%
+label-mode-padding = 2
+label-mode-background = #e60053
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-focused = %index%
+label-focused-foreground = #ffffff
+label-focused-background = #3f3f3f
+label-focused-underline = #fba922
+label-focused-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-unfocused = %index%
+label-unfocused-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-visible = %index%
+label-visible-underline = #555555
+label-visible-padding = 4
+
+; Available tokens:
+;   %name%
+;   %icon%
+;   %index%
+;   %output%
+; Default: %icon%  %name%
+label-urgent = %index%
+label-urgent-foreground = #000000
+label-urgent-background = #bd2c40
+label-urgent-padding = 4
+
+; Separator in between workspaces
+label-separator = |
+label-separator-padding = 2
+label-separator-foreground = #ffb52a
+[module/cpu]
+type = internal/cpu
+interval = 1.5
+format = <ramp-coreload>
+label = CPU %percentage%%
+ramp-coreload-foreground = ${colors.inactive-fg}
+ramp-coreload-0 = ▁
+ramp-coreload-1 = ▂
+ramp-coreload-2 = ▃
+ramp-coreload-3 = ▄
+ramp-coreload-4 = ▅
+ramp-coreload-5 = ▆
+ramp-coreload-6 = ▇
+ramp-coreload-7 = █
+
+
+[module/memory]
+type = internal/memory
+interval = 3
+format = <bar-used>
+label = %percentage_used% %
+label-font = 10
+label-foreground = ${colors.inactive-fg}
+
+bar-used-indicator =
+bar-used-width = 5
+bar-used-fill-foreground = ${colors.inactive-fg}
+bar-used-fill = "█ "
+bar-used-empty = "█ "
+bar-used-empty-foreground = ${colors.inactive-bg}
+
+
+[template/network]
+type = internal/network
+interval = 2.0
+ping-interval = 10
+label-disconnected = "   No Connection"
+label-disconnected-foreground = ${colors.inactive-fg}
+
+
+[module/wireless-network]
+inherits = template/network
+interface = wlp4s0
+format-connected = <label-connected>
+label-connected = "   %essid%  (%signal%%)"
+label-connected-foreground = ${colors.inactive-fg}
+
+
+[module/wired-network]
+type = internal/network
+interface = enp8s0
+
+interval = 5
+; Available tags:
+;   <label-connected> (default)
+;   <ramp-signal>
+format-connected = <label-connected>
+
+; Available tags:
+;   <label-disconnected> (default)
+format-disconnected = <label-disconnected>
+
+; Available tags:
+;   <label-connected> (default)
+;   <label-packetloss>
+;   <animation-packetloss>
+format-packetloss = <animation-packetloss> <label-connected>
+
+; All labels support the following tokens:
+;   %ifname%    [wireless+wired]
+;   %local_ip%  [wireless+wired]
+;   %local_ip6% [wireless+wired]
+;   %essid%     [wireless]
+;   %signal%    [wireless]
+;   %upspeed%   [wireless+wired]
+;   %downspeed% [wireless+wired]
+;   %linkspeed% [wired]
+
+; Default: %ifname% %local_ip%
+label-connected = ﬠ%downspeed:9%
+label-connected-foreground = #eefafafa
+
+; Default: (none)
+label-disconnected = not connected
+label-disconnected-foreground = #66ffffff
+
+; Default: (none)
+;label-packetloss = %essid%
+;label-packetloss-foreground = #eefafafa
+
+; Only applies if <ramp-signal> is used
+
+
+; Only applies if <animation-packetloss> is used
+animation-packetloss-0 = ⚠
+animation-packetloss-0-foreground = #ffa64c
+animation-packetloss-1 = 📶
+animation-packetloss-1-foreground = #000000
+; Framerate in milliseconds
+animation-packetloss-framerate = 500
+[module/clock]
+type = internal/date
+interval = 1
+format-padding = 0
+format-background = ${colors.bg}
+format-foreground = ${colors.fg}
+date = %%{F#bb}%a %e %b%%{F-}
+date-alt = %%{F#bb}%D%{F-}
+time = %H:%M
+time-alt = %H:%M:%S
+label = " %date%  %time%  "
+format = <label>
+
+
+[template/battery]
+type = internal/battery
+full-at = 99
+
+ramp-capacity-foreground = ${colors.inactive-fg}
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+
+label-discharging-foreground = ${colors.inactive-fg}
+label-discharging = %percentage%%
+
+label-charging-foreground = ${colors.arc-blue}
+label-charging = 
+
+format-discharging = <label-discharging> <ramp-capacity>
+format-charging = <label-charging> <ramp-capacity>
+format-full = <ramp-capacity>
+
+
+[module/bat0]
+inherit = template/battery
+battery = BAT0
+
+[module/bat1]
+inherit = template/battery
+battery = BAT1
+
+[module/title]
+type = internal/xwindow
+format = <label>
+format-padding = 4
+
+; Available tokens:
+;   %title%
+; Default: %title%
+label =ﬓ %title%
+label-maxlen = 50
+
+; Used instead of label when there is no window title
+; Available tokens:
+;   None
+label-empty = Empty
+label-empty-foreground = #f00
+[module/arch-logo]
+type = custom/text
+content = 
+content-padding = 2 
+content-foreground = #1793d0
+[module/battery]
+type = internal/battery
+format-padding = 0
+full-at = 99 ;set 100%=99%
+battery = BAT1
+adapter = ACAD
+format-charging = <label-charging> <animation-charging>
+
+format-discharging = <ramp-capacity> <label-discharging>
+
+label-charging = %percentage%%
+label-discharging = %percentage%%
+
+label-full = Fully Charged
+ramp-capacity-0 =
+ramp-capacity-1 = 
+ramp-capacity-2 =
+ramp-capacity-3 =
+ramp-capacity-4 =
+ramp-capacity-5 =
+ramp-capacity-6 =
+ramp-capacity-7 =
+ramp-capacity-8 =
+ramp-capacity-9 =
+
+;Charging animation:
+animation-charging-0 =
+animation-charging-1 =
+animation-charging-2 =
+animation-charging-3 = 
+animation-charging-4 =
+animation-charging-5 =
+animation-charging-6 =  
+;Animation icons:                 
+; Framerate in milliseconds
+animation-charging-framerate = 750
+; vim:ft=dosini
+
+
